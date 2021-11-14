@@ -1,4 +1,7 @@
 .cards-container {
+  width: 100%;
+  height: auto;
+  flex-wrap: wrap;
   display: flex;
   padding: 24px 0px;
   justify-content: space-around;
@@ -28,9 +31,10 @@
 
 .card-product {
   position:relative;
+  margin-top: 40px;
   overflow: hidden;
-  height: 200px;
-  width: 300px;
+  height: 350px;
+  width: 400px;
   background: white;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.438);
   display: flex;
@@ -64,6 +68,10 @@
 
 .card-product .card-product-infos {
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height:100%;
 }
 
 .card-product .card-del {

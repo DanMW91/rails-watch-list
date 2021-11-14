@@ -1,26 +1,60 @@
-<h1><%= @list.name %></h1>
+<%= javascript_pack_tag 'modal' %>
 
-<div class='cards-container'>
-  <% @bookmarks.each do |bookmark| %>
-  <% movie = Movie.find(bookmark.movie_id) %>
-  <div class="card-product">
-    <img src="https://image.tmdb.org/t/p/w500/<%=movie.poster_url%>" />
-    <div class="card-product-infos">
-      <h2><%= movie.title %></h2>
-      <p ><%= movie.overview %></p>
-      <p class='m-3'><i>- "<%= bookmark.comment %>"</i></p>
-      <%= link_to "x", bookmark_path(bookmark), method: "delete", class: "card-del"%>
-    </div>
-  </div>
-  <% end %>
+
+<div class="list-banner" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('<%= cl_image_path @list.photo.key %>')">
+  <h1><%= @list.name %></h1>
 </div>
+<div class="container">
+
+  <div class='cards-container'>
+    <% if @bookmarks.empty? %>
+      <h3>No Movies Yet!</h3>
+    <%end%>
+    <% @bookmarks.each do |bookmark| %>
+    <% movie = Movie.find(bookmark.movie_id) %>
+    <div class="card-product">
+      <img src="https://image.tmdb.org/t/p/w500/<%=movie.poster_url%>" />
+      <div class="card-product-infos">
+        <h2><%= movie.title %></h2>
+        <p ><%= movie.overview %></p>
+        <p class='m-3'><i>- "<%= bookmark.comment %>"</i></p>
+        <%= link_to "x", bookmark_path(bookmark), method: "delete", class: "card-del"%>
+      </div>
+    </div>
+    <% end %>
+  </div>
 
 
-<div class='form-div'>
-<h3>add movie</h3>
-<%= simple_form_for [@list, @bookmark] do |f| %>
-<%= f.input :comment %>
-<%= f.association :movie %>
-<%= f.button :submit, class: "btn btn-primary" %>
-<% end %>
+
+  <%= simple_form_for :search, url: movies_search_path, method: "GET", html: { class: 'form' } do |f| %>
+    <%= f.input :query, label: 'Search for Movie', input_html: {value: ""} %>
+    <%= f.hidden_field :list_id, value: @list.id %>
+    <%= f.submit "Search", class: "btn btn-primary" %>
+  <% end %>
+
+
+  <div class="cards-container">
+    <% if @movies  %>
+
+      <% @movies.each_with_index do |movie, i| %>
+        <div class="card-product">
+          <img src="https://image.tmdb.org/t/p/w500/<%=movie['poster_path']%>" />
+          <div class="card-product-infos">
+            <h2><%= movie['title'] %></h2>
+            <p ><%= movie['overview'] %></p>
+            <%= simple_form_for [@list, @bookmark] do |f| %>
+            <%= f.input :comment, input_html: {minlength: 6} %>
+
+            <%= f.fields_for @movie do |m| %>
+              <%= m.hidden_field :title, value: movie['title'] %>
+              <%= m.hidden_field :overview, value: movie['overview'] %>
+              <%= m.hidden_field :poster_url, value: movie['poster_path'] %>
+            <% end %>
+            <%= f.button :submit, class: "btn btn-primary" %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
 </div>

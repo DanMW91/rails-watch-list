@@ -7,6 +7,8 @@ class ListsController < ApplicationController
     @list = List.find(params[:id])
     @bookmark = Bookmark.new
     @bookmarks = Bookmark.where(list_id: @list.id)
+    @movies = params[:movies] if params[:movies]
+    @movie = Movie.new
   end
 
   def new
